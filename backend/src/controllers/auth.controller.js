@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/user.model.js'
-
+import Inventory from '../models/inventory.model.js';
 
 //Generate JWT Token
 const generateToken = (id) => {
@@ -37,21 +37,21 @@ export const register = async (req, res, next) => {
       password,
     });
 
-    // // Record user signup in inventory
-    // await Inventory.findOneAndUpdate(
-    //   { date: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
-    //   {
-    //     $inc: { newUsersThisWeek: 1 },
-    //     $push: {
-    //       userActivities: {
-    //         activityType: 'signup',
-    //         user: user._id,
-    //         timestamp: new Date(),
-    //       },
-    //     },
-    //   },
-    //   { upsert: true, new: true }
-    // );
+    // Record user signup in inventory
+    await Inventory.findOneAndUpdate(
+      { date: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+      {
+        $inc: { newUsersThisWeek: 1 },
+        $push: {
+          userActivities: {
+            activityType: 'signup',
+            user: user._id,
+            timestamp: new Date(),
+          },
+        },
+      },
+      { upsert: true, new: true }
+    );
 
     // Generate token
     const token = generateToken(user._id);

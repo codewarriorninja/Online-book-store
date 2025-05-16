@@ -118,3 +118,47 @@ export const logout = async(req,res) => {
 export const getCurrentUser = async(req,res)=>{
   res.status(200).json(req.user);
 }
+
+//Update user profile
+export const updateProfile = async(req,res,next) =>{
+  try {
+    const {name, email, password} = req.body;
+    const userId = req.user._id;
+
+    //Buid update object
+    const updateData = {};
+    if(name) updateData.name = name;
+    if(email) updateData.email = email;
+
+    //Find and update user
+    let user = await User.findById(userId);
+
+    if(!user){
+      return res.status(404).json({message:'User not found'});
+    }
+
+    //Update password if provided
+    if(password){
+      user.password = password;
+      await user.save();
+    }
+
+    //Update other fields
+    if(Object.keys(updateData).length > 0){
+      user = await User.findByIdAndUpdate(userId, updateData,{
+        new:true,
+        runValidators:true,
+      });
+    }
+
+    res.status(200).json({
+      _id:user._id,
+      name:user.name,
+      email:user.email,
+      role:user.role,
+      isActive:user.isActive
+    })
+  } catch (error) {
+    next(error);
+  }
+}

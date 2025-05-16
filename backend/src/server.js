@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.route.js'
 import bookRoutes from './routes/book.route.js'
+import userRoutes from './routes/user.route.js'
 import { errorHandler } from './middleware/error.middleware.js'
 
 //Load environment variables
@@ -26,6 +27,7 @@ app.use(cookieParser());
 //Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/books', bookRoutes)
+app.use('/api/users',userRoutes);
 
 
 //Error handling middleware

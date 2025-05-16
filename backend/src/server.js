@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.route.js'
 import { errorHandler } from './middleware/error.middleware.js'
+
 //Load environment variables
 dotenv.config();
 
@@ -12,6 +13,7 @@ const app = express();
 
 connectDB();
 
+app.use(express.urlencoded({extended:true}));
 
 app.use(cors({
     origin:process.env.FRONTEND_URL || 'http://localhost:5173',

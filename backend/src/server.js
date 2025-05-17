@@ -6,6 +6,7 @@ import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.route.js'
 import bookRoutes from './routes/book.route.js'
 import userRoutes from './routes/user.route.js'
+import analyticsRoutes from './routes/analytics.routes.js'
 import { errorHandler } from './middleware/error.middleware.js'
 
 //Load environment variables
@@ -28,7 +29,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes)
 app.use('/api/books', bookRoutes)
 app.use('/api/users',userRoutes);
-
+app.use('/api/analytics', analyticsRoutes);
 
 //Error handling middleware
 app.use(errorHandler);

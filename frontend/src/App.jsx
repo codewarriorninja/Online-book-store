@@ -10,6 +10,11 @@ import Home from './pages/Home/Home';
 import SignUp from './pages/SignUp/SignUp';
 import SignIn from './pages/SignIn/SignIn';
 
+//Dashboard Pages
+import Dashboard from './pages/dashboard/Dashboard/Dashboard';
+import Profile from './pages/Dashboard/Profile/Profile';
+import AddBook from './pages/dashboard/AddBook/Addbook';
+
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -53,6 +58,16 @@ const App = () => {
             <SignIn />
           </PublicRoute>
         } />
+
+        {/* Dashboard Routes */}
+        <Route path='dashboard' element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }>
+        <Route path='profile' element={<Profile />} />
+        <Route path="add-book" element={<AddBook />} />
+        </Route>
        </Route>
       </Routes>
     </Router>

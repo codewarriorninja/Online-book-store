@@ -54,7 +54,7 @@ export const booksApi = {
         'Content-Type':'multipart/form-data',
       },
     });
-    return respinse.data;
+    return response.data;
   },
 
   //Update book
@@ -99,12 +99,12 @@ export const booksApi = {
 };
 
 //User API
-export const userApi = {
+export const usersApi = {
   //Get user profile
   getProfile: async() =>{
     const response = await api.get('auth/me');
     return response.data;
-  }
+  },
 
   //Update user profile
   updateProfile: async (userData) => {
@@ -123,7 +123,8 @@ export const userApi = {
 export const adminApi = {
   //Get all users(admin only)
   getUsers:async() => {
-    const response = await api.get('/users/')
+    const response = await api.get('/users/');
+    return response.data;
   },
 
   // Get activity logs (admin only)

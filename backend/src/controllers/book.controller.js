@@ -50,20 +50,18 @@ export const getBookById = async (req, res, next) => {
 // Create a new book
 export const createBook = async (req, res, next) => {
   try {
-    const { title, description, author } = req.body;
-    console.log(req.body);
-
-    let {tags} = req.body;
-
-    //Handle tags comign as string from form-data
-    if(tags && typeof tags === 'string'){
-        try {
-          //Try to parse if it's aJSON string 
-          tags = JSON.parse(tags); 
-        } catch (error) {
-             // If not JSON, split by comma
-            tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-        }
+    const { title, description, author, price, category, isbn, publishedDate, language, pageCount } = req.body;
+    let { tags } = req.body;
+    
+    // Handle tags coming as string from form-data
+    if (tags && typeof tags === 'string') {
+      try {
+        // Try to parse if it's a JSON string
+        tags = JSON.parse(tags);
+      } catch (e) {
+        // If not JSON, split by comma
+        tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      }
     }
     
     // Create book without image first
@@ -71,6 +69,12 @@ export const createBook = async (req, res, next) => {
       title,
       description,
       author,
+      price,
+      category,
+      isbn,
+      publishedDate: publishedDate ? new Date(publishedDate) : undefined,
+      language,
+      pageCount,
       tags: tags || [],
       createdBy: req.user._id,
     });
@@ -147,8 +151,20 @@ export const createBook = async (req, res, next) => {
 // Update a book
 export const updateBook = async (req, res, next) => {
   try {
-    const { title, description, author, tags } = req.body;
+    const { title, description, author, price, category, isbn, publishedDate, language, pageCount } = req.body;
+    let { tags } = req.body;
     const bookId = req.params.id;
+    
+    // Handle tags coming as string from form-data
+    if (tags && typeof tags === 'string') {
+      try {
+        // Try to parse if it's a JSON string
+        tags = JSON.parse(tags);
+      } catch (e) {
+        // If not JSON, split by comma
+        tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      }
+    }
     
     // Find book
     let book = await Book.findById(bookId);
@@ -166,6 +182,12 @@ export const updateBook = async (req, res, next) => {
     if (title) book.title = title;
     if (description) book.description = description;
     if (author) book.author = author;
+    if (price !== undefined) book.price = price;
+    if (category) book.category = category;
+    if (isbn) book.isbn = isbn;
+    if (publishedDate) book.publishedDate = new Date(publishedDate);
+    if (language) book.language = language;
+    if (pageCount !== undefined) book.pageCount = pageCount;
     if (tags) book.tags = tags;
     
     // Handle image upload if file exists

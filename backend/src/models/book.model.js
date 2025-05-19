@@ -17,6 +17,34 @@ const bookSchema = new mongoose.Schema(
       required: [true, 'Author name is required'],
       trim: true,
     },
+    price: {
+      type: Number,
+      required: [true, 'Book price is required'],
+      min: 0,
+    },
+    category: {
+      type: String,
+      required: [true, 'Book category is required'],
+      trim: true,
+    },
+    isbn: {
+      type: String,
+      required: [true, 'ISBN is required'],
+      trim: true,
+      minlength: 10,
+    },
+    publishedDate: {
+      type: Date,
+    },
+    language: {
+      type: String,
+      default: 'English',
+      trim: true,
+    },
+    pageCount: {
+      type: Number,
+      min: 1,
+    },
     tags: [{
       type: String,
       trim: true,

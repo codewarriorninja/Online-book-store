@@ -112,11 +112,11 @@ export const usersApi = {
     return response.data;
   },
 
-  //Get user's books
-  // getUserBooks: async () => {
-  //   const response = await api.get('/users/books');
-  //   return response.data;
-  // },
+  // Get user's books
+  getUserBooks: async () => {
+    const response = await api.get('/books/');
+    return response.data;
+  },
 };
 
 //Admin API

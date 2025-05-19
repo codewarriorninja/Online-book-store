@@ -369,3 +369,16 @@ export const addBookReview = async (req, res, next) => {
     next(error);
   }
 };
+
+//Get users's books
+export const getUserBooks = async(req,res,next) => {
+  try {
+    //Find all books created by the current user
+    const books = await Book.find({createdBy:req.user._id})
+    .sort({createdAt:-1});
+    
+    res.status(200).json(books);
+  } catch (error) {
+    next(error);
+  }
+}

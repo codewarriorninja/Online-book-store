@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { getAllBooks, getBookById, createBook, updateBook, deleteBook, getBookReviews, addBookReview } from '../controllers/book.controller.js';
+import { getAllBooks, getBookById, createBook, updateBook, deleteBook, getBookReviews, addBookReview,getUserBooks } from '../controllers/book.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate, createBookSchema, updateBookSchema, createReviewSchema } from '../lib/validation.js';
 
@@ -42,6 +42,7 @@ router.get('/:id', getBookById);
 router.get('/:id/reviews', getBookReviews);
 
 // Protected routes
+router.get('/', protect, getUserBooks);
 router.post('/', protect, upload.single('coverImage'), validate(createBookSchema), createBook);
 router.patch('/:id', protect, upload.single('coverImage'), validate(updateBookSchema), updateBook);
 router.delete('/:id', protect, deleteBook);

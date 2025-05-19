@@ -26,7 +26,7 @@ const Navbar = () => {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <BookOpen className="h-8 w-8 text-primary-600" />
+              <BookOpen className="h-8 w-8 text-[#0284c7]" />
               <span className="ml-2 text-xl font-bold text-gray-900">BookStore</span>
             </Link>
           </div>
@@ -44,7 +44,7 @@ const Navbar = () => {
                 </Link>
                 <div className="relative ml-3">
                   <button 
-                    className="flex items-center text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className="flex items-center text-gray-700 hover:text-[#0284c7] px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-5 w-5 mr-1" />
@@ -102,7 +102,7 @@ const Navbar = () => {
                   Dashboard
                 </Link>
                 <button 
-                  className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600"
+                  className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-[#0284c7] cursor-pointer"
                   onClick={() => {
                     handleLogout();
                     toggleMenu();

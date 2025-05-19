@@ -80,7 +80,7 @@ const Profile = () => {
   if (profileLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
+        <Loader2 className="h-8 w-8 text-[#0284c7] animate-spin" />
         <span className="ml-2 text-lg">Loading profile...</span>
       </div>
     );

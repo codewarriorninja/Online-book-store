@@ -42,10 +42,15 @@ export const booksApi = {
 
     //Add all book data to form
     Object.keys(bookData).forEach(key => {
-      if(key === 'coverImage' && bookData[key] instanceof File){
-        formData.append(key,bookData[key]);
-      }else if(bookData[key] !== undefined){
-        formData.append(key,bookData[key]);
+      if (key === 'coverImage' && bookData[key] instanceof File) {
+        formData.append(key, bookData[key]);
+      } else if (key === 'tags' && Array.isArray(bookData[key])) {
+        // Handle tags array properly - append each tag with the same key name
+        bookData[key].forEach(tag => {
+          formData.append('tags[]', tag);
+        });
+      } else if (bookData[key] !== undefined) {
+        formData.append(key, bookData[key]);
       }
     });
 
@@ -81,7 +86,7 @@ export const booksApi = {
 
   //Delete book
   deleteBook:async(id) => {
-    const response = await api.get(`books/${id}`);
+    const response = await api.delete(`books/${id}`);
     return response.data;
   },
 
@@ -101,7 +106,7 @@ export const booksApi = {
 //User API
 export const usersApi = {
   //Get user profile
-  getProfile: async() =>{
+  getProfile: async() => {
     const response = await api.get('auth/me');
     return response.data;
   },

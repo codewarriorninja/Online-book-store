@@ -14,6 +14,7 @@ import SignIn from './pages/SignIn/SignIn';
 import Dashboard from './pages/dashboard/Dashboard/Dashboard';
 import Profile from './pages/Dashboard/Profile/Profile';
 import AddBook from './pages/dashboard/AddBook/Addbook';
+import MyBooks from './pages/dashboard/MyBooks/MyBooks';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -65,6 +66,7 @@ const App = () => {
             <Dashboard />
           </ProtectedRoute>
         }>
+        <Route index element={<MyBooks />} />
         <Route path='profile' element={<Profile />} />
         <Route path="add-book" element={<AddBook />} />
         </Route>

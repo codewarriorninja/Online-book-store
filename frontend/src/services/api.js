@@ -2,7 +2,7 @@ import axios from "axios";
 
 //Create axios instance with base URL
 const api = axios.create({
-    baseURL:'/api',
+    baseURL:import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
     headers:{
         'Content-Type':'application/json',
     },
@@ -20,5 +20,117 @@ api.interceptors.request.use(
     },
     (error) => Promise.reject(error)
 );
+
+//Book API
+export const booksApi = {
+  //Get all books with optional filters
+  getBooks:async (params={}) => {
+    const response = await api.get('/books',{params});
+    return response.data;
+  },
+
+  //Get single book by ID
+  getBookById:async(id) => {
+    const response = await api.get(`books/${id}`);
+    return response.data;
+  },
+
+  //Create new book
+  createBook:async(bookData) =>{
+    //Handle form data for image upload
+    const formData = new FormData();
+
+    //Add all book data to form
+    Object.keys(bookData).forEach(key => {
+      if(key === 'coverImage' && bookData[key] instanceof File){
+        formData.append(key,bookData[key]);
+      }else if(bookData[key] !== undefined){
+        formData.append(key,bookData[key]);
+      }
+    });
+
+    const response = await api.post('/books',formData,{
+      headers:{
+        'Content-Type':'multipart/form-data',
+      },
+    });
+    return respinse.data;
+  },
+
+  //Update book
+  updateBook:async(id,bookData) => {
+    //Handle form data for image upload
+    const formData = new FormData();
+
+    //Add all book data to form
+    Object.keys(bookData).forEach(key => {
+      if (key === 'coverImage' && bookData[key] instanceof File) {
+        formData.append(key, bookData[key]);
+      } else if (bookData[key] !== undefined) {
+        formData.append(key, bookData[key]);
+      }
+    });
+
+    const response = await api.get(`/books/${id}`, formData,{
+      headers:{
+       'Content-Type': 'multipart/form-data', 
+      },
+    });
+    return response.data;
+  },
+
+  //Delete book
+  deleteBook:async(id) => {
+    const response = await api.get(`books/${id}`);
+    return response.data;
+  },
+
+  //Get book reviews
+  getBookReviews:async(id) => {
+    const response = await api.get(`/books/${id}/reviews`);
+    return response.data;
+  },
+
+  //Add book review
+  addBookReview:async(id,reviewData) =>{
+    const response = await api.post(`/books/${id}/reviews`, reviewData);
+    return response.data;
+  },
+};
+
+//User API
+export const userApi = {
+  //Get user profile
+  getProfile: async() =>{
+    const response = await api.get('auth/me');
+    return response.data;
+  }
+
+  //Update user profile
+  updateProfile: async (userData) => {
+    const response = await api.put('/auth/update', userData);
+    return response.data;
+  },
+
+  //Get user's books
+  // getUserBooks: async () => {
+  //   const response = await api.get('/users/books');
+  //   return response.data;
+  // },
+};
+
+//Admin API
+export const adminApi = {
+  //Get all users(admin only)
+  getUsers:async() => {
+    const response = await api.get('/users/')
+  },
+
+  // Get activity logs (admin only)
+  getActivityLogs: async () => {
+    const response = await api.get('/analytics/user-activity');
+    return response.data;
+  },
+}
 
 export default api

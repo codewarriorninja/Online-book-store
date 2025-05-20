@@ -9,6 +9,7 @@ import RootLayout from './components/RootLayout';
 import Home from './pages/Home/Home';
 import SignUp from './pages/SignUp/SignUp';
 import SignIn from './pages/SignIn/SignIn';
+import Browse from './pages/Browse/Browse';
 
 //Dashboard Pages
 import Dashboard from './pages/dashboard/Dashboard/Dashboard';
@@ -49,6 +50,7 @@ const App = () => {
        {/* Public Routes  */}
        <Route path='/' element={<RootLayout />}>
          <Route index element={<Home />} />
+         <Route path='browse' element={<Browse />} />
          <Route path="signup" element={
               <PublicRoute>
                 <SignUp />

@@ -170,7 +170,7 @@ const Browse = () => {
                                 <p className="text-gray-600 text-sm mb-2">{book.author}</p>
                                 <div className="flex justify-between items-center">
                                     <span className="font-bold text-[#0284c7]">${book.price.toFixed(2)}</span>
-                                    <Link className="text-sm text-[#0284c7] hover:text-[#0369a1]">
+                                    <Link to={`/books/${book._id}`} className="text-sm text-[#0284c7] hover:text-[#0369a1]">
                                      View Details
                                     </Link>
                                 </div>

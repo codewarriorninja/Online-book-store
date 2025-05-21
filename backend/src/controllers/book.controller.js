@@ -10,10 +10,22 @@ export const getAllBooks = async (req, res, next) => {
     const { title, author, tag } = req.query;
     
     // Build filter object
-    const filter = {};
-    if (title) filter.title = { $regex: title, $options: 'i' };
-    if (author) filter.author = { $regex: author, $options: 'i' };
-    if (tag) filter.tags = { $in: [tag] };
+    let filter = {};
+
+    if(title || author || tag){
+      filter.$or = [];
+
+      if(title){
+        filter.$or.push({title:{$regex:title,$options:'i'}});
+      }
+      if(author){
+        filter.$or.push({author:{$regex:author,$options:'i'}});
+      }
+      
+      if(tag){
+        filter.$or.push({tags:{$regex:tag,$options:'i'}});
+      }
+    }
     
     // Find books with filter
     const books = await Book.find(filter)

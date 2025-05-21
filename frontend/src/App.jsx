@@ -16,6 +16,7 @@ import Dashboard from './pages/dashboard/Dashboard/Dashboard';
 import Profile from './pages/Dashboard/Profile/Profile';
 import AddBook from './pages/dashboard/AddBook/Addbook';
 import MyBooks from './pages/dashboard/MyBooks/MyBooks';
+import BookDetail from './pages/BookDetails/BookDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
@@ -51,6 +52,7 @@ const App = () => {
        <Route path='/' element={<RootLayout />}>
          <Route index element={<Home />} />
          <Route path='browse' element={<Browse />} />
+         <Route path='books/:id' element={<BookDetail />} />
          <Route path="signup" element={
               <PublicRoute>
                 <SignUp />

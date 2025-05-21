@@ -38,11 +38,11 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Public routes
 router.get('/', getAllBooks);
+router.get('/mybook', protect, getUserBooks);
 router.get('/:id', getBookById);
 router.get('/:id/reviews', getBookReviews);
 
 // Protected routes
-router.get('/', protect, getUserBooks);
 router.post('/', protect, upload.single('coverImage'), validate(createBookSchema), createBook);
 router.patch('/:id', protect, upload.single('coverImage'), validate(updateBookSchema), updateBook);
 router.delete('/:id', protect, deleteBook);

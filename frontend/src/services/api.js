@@ -25,7 +25,18 @@ api.interceptors.request.use(
 export const booksApi = {
   //Get all books with optional filters
   getBooks:async (params={}) => {
-    const response = await api.get('/books',{params});
+    // If search parameter is provided, map it to title and author parameters
+    // that the backend API expects
+
+    const apiParams = {...params};
+    if(params.search){
+      apiParams.title = params.search;
+      apiParams.author = params.search;
+      apiParams.tag = params.search;
+      // Remove the original search parameter as it's not used by the backend
+      delete apiParams.search;
+    }
+    const response = await api.get('/books',{params:apiParams});
     return response.data;
   },
 
@@ -119,7 +130,7 @@ export const usersApi = {
 
   // Get user's books
   getUserBooks: async () => {
-    const response = await api.get('/books/');
+    const response = await api.get('/books/mybook');
     return response.data;
   },
 };

@@ -18,6 +18,11 @@ import AddBook from './pages/dashboard/AddBook/Addbook';
 import MyBooks from './pages/dashboard/MyBooks/MyBooks';
 import BookDetail from './pages/BookDetails/BookDetail';
 
+//Admin Pages
+import UserManagement from './pages/admin/UserManagement/UserManagement';
+import BookInventory from './pages/admin/BookInventory/BookInventory';
+import ActivityLog from './pages/admin/ActivityLogs/ActivityLog';
+
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -73,6 +78,32 @@ const App = () => {
         <Route index element={<MyBooks />} />
         <Route path='profile' element={<Profile />} />
         <Route path="add-book" element={<AddBook />} />
+        </Route>
+
+        {/* Admin Routes */}
+        <Route 
+         path='admin/users' 
+         element={<ProtectedRoute requiredRole={'admin'}>
+          <Dashboard />
+          </ProtectedRoute>
+        }>
+          <Route index element={<UserManagement />} />
+        </Route>
+        <Route 
+         path='admin/books' 
+         element={<ProtectedRoute requiredRole={'admin'}>
+          <Dashboard />
+          </ProtectedRoute>
+        }>
+          <Route index element={<BookInventory />} />
+        </Route>
+        <Route 
+         path='admin/logs' 
+         element={<ProtectedRoute requiredRole={'admin'}>
+          <Dashboard />
+          </ProtectedRoute>
+        }>
+          <Route index element={<ActivityLog />} />
         </Route>
        </Route>
       </Routes>

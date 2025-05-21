@@ -44,6 +44,18 @@ const Browse = () => {
         });
     };
 
+    // Validate price inputs
+    const handlePriceChange = (e) => {
+        const {name, value} = e.target;
+        // Only allow numbers and empty string
+        if(value === '' || /^\d*\.?\d*$/.test(value)) {
+            setFilters(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold mb-8">Browse Books</h1>
@@ -107,7 +119,7 @@ const Browse = () => {
                     name="minPrice"
                     min={'0'}
                     value={filters.minPrice}
-                    onChange={handleFilterChange}
+                    onChange={handlePriceChange}
                     className="w-24 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9]"
                     />
                 </div>
@@ -121,7 +133,7 @@ const Browse = () => {
               name="maxPrice"
               min="0"
               value={filters.maxPrice}
-              onChange={handleFilterChange}
+              onChange={handlePriceChange}
               className="w-24 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9]"
             />
            </div>
@@ -158,11 +170,14 @@ const Browse = () => {
                                     <div className="flex items-center mb-2">
                                         <div className="flex text-yellow-400">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star className={`h-4 w-4 ${i < Math.random(book.averageRating) ? 'fill-current' : ''}`}/>
+                                                <Star 
+                                                    key={i}
+                                                    className={`h-4 w-4 ${i < Math.round(book.averageRating) ? 'fill-current' : ''}`}
+                                                />
                                             ))}
                                         </div>
                                         <span className="text-gray-600 text-sm ml-2">
-                                        {book.averageRating.toFixed(1)} ({book.reviewCount || 0} reviews)
+                                            {book.averageRating.toFixed(1)} ({book.reviewCount || 0} reviews)
                                         </span>
                                     </div>
                                 )}

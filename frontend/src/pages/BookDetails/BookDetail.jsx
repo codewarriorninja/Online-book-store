@@ -149,9 +149,15 @@ const BookDetail = () => {
                 </p>
                 <p className='flex items-center text-gray-600 mb-2'>
                   <span className='inline-block w-4 mr-2'>📧</span>
-                  {book?.createdBy?.email || 'Email not available'}
+                  {book?.createdBy?.email}
                 </p>
-                <p className="text-gray-600 mb-4">Member since {book.createdBy.createdAt && !isNaN(new Date(book.createdBy.createdAt)) ? new Date(book.createdBy.createdAt).toLocaleDateString() : 'N/A'}</p>
+                <p className="text-gray-600 mb-4">
+                  Member since {book?.createdBy?.createdAt ? new Date(book.createdBy.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'N/A'}
+                </p>
                 {book.createdBy._id !== user?._id && (
                   <button className="w-full btn btn-primary cursor-pointer bg-[#0ea5e9] hover:bg-[#0284c7] py-1 rounded-md text-white">
                     Contact Creator

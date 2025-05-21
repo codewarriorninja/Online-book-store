@@ -7,30 +7,73 @@ import fs from 'fs';
 // Get all books with filtering
 export const getAllBooks = async (req, res, next) => {
   try {
-    const { title, author, tag } = req.query;
+    const { title, author, tag, category, minPrice, maxPrice, sortBy, search } = req.query;
     
     // Build filter object
     let filter = {};
 
-    if(title || author || tag){
-      filter.$or = [];
+    // Handle search parameter
+    if(search){
+      filter.$or = [
+        {title: {$regex: search, $options: 'i'}},
+        {author: {$regex: search, $options: 'i'}},
+        {isbn: {$regex: search, $options: 'i'}}
+      ];
+    } else {
+      // Handle individual search parameters
+      if(title || author || tag){
+        filter.$or = [];
 
-      if(title){
-        filter.$or.push({title:{$regex:title,$options:'i'}});
+        if(title){
+          filter.$or.push({title: {$regex: title, $options: 'i'}});
+        }
+        if(author){
+          filter.$or.push({author: {$regex: author, $options: 'i'}});
+        }
+        if(tag){
+          filter.$or.push({tags: {$regex: tag, $options: 'i'}});
+        }
       }
-      if(author){
-        filter.$or.push({author:{$regex:author,$options:'i'}});
-      }
-      
-      if(tag){
-        filter.$or.push({tags:{$regex:tag,$options:'i'}});
+    }
+
+    // Category filter
+    if(category){
+      filter.category = category;
+    }
+
+    // Price range filter
+    if(minPrice || maxPrice){
+      filter.price = {};
+      if(minPrice) filter.price.$gte = Number(minPrice);
+      if(maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+    
+    // Build sort object
+    let sort = { createdAt: -1 }; // Default sort by newest
+    if(sortBy){
+      switch(sortBy){
+        case 'oldest':
+          sort = { createdAt: 1 };
+          break;
+        case 'price_low':
+          sort = { price: 1 };
+          break;
+        case 'price_high':
+          sort = { price: -1 };
+          break;
+        case 'title_asc':
+          sort = { title: 1 };
+          break;
+        case 'title_desc':
+          sort = { title: -1 };
+          break;
       }
     }
     
-    // Find books with filter
+    // Find books with filter and sort
     const books = await Book.find(filter)
-      .populate('createdBy', 'name')
-      .sort({ createdAt: -1 });
+      .populate('createdBy', 'name email')
+      .sort(sort);
     
     res.status(200).json(books);
   } catch (error) {
@@ -42,7 +85,7 @@ export const getAllBooks = async (req, res, next) => {
 export const getBookById = async (req, res, next) => {
   try {
     const book = await Book.findById(req.params.id)
-      .populate('createdBy', 'name')
+      .populate('createdBy', 'name email createdAt')
       .populate({
         path: 'reviews',
         populate: { path: 'user', select: 'name' },

@@ -27,15 +27,26 @@ export const booksApi = {
   getBooks:async (params={}) => {
     // If search parameter is provided, map it to title and author parameters
     // that the backend API expects
-
     const apiParams = {...params};
+    
     if(params.search){
       apiParams.title = params.search;
       apiParams.author = params.search;
       apiParams.tag = params.search;
-      // Remove the original search parameter as it's not used by the backend
       delete apiParams.search;
     }
+
+    // Ensure numeric values are properly passed
+    if(params.minPrice) apiParams.minPrice = Number(params.minPrice);
+    if(params.maxPrice) apiParams.maxPrice = Number(params.maxPrice);
+
+    // Remove empty values to avoid sending unnecessary parameters
+    Object.keys(apiParams).forEach(key => {
+      if(apiParams[key] === '' || apiParams[key] === null || apiParams[key] === undefined) {
+        delete apiParams[key];
+      }
+    });
+
     const response = await api.get('/books',{params:apiParams});
     return response.data;
   },
@@ -138,14 +149,36 @@ export const usersApi = {
 //Admin API
 export const adminApi = {
   //Get all users(admin only)
-  getUsers:async() => {
+  getUsers: async() => {
+    console.log('Fetching all users...');
     const response = await api.get('/users/');
+    console.log('Users API response:', {
+      status: response.status,
+      dataLength: response.data?.length,
+      firstUser: response.data?.[0] ? {
+        id: response.data[0]._id,
+        bookCount: response.data[0].bookCount,
+        hasBooks: response.data[0].books?.length > 0
+      } : 'No users'
+    });
     return response.data;
   },
 
   // Get activity logs (admin only)
-  getActivityLogs: async () => {
-    const response = await api.get('/analytics/user-activity');
+  getActivityLogs: async (filters = {}) => {
+    const params = new URLSearchParams();
+    if (filters.period) params.append('period', filters.period);
+    if (filters.actionType) params.append('actionType', filters.actionType);
+    
+    const response = await api.get(`/analytics/user-activity?${params.toString()}`);
+    return response.data;
+  },
+
+  // Update user status (admin only)
+  updateUser: async (userId, userData) => {
+    console.log('Making API call to update user:', { userId, userData });
+    const response = await api.patch(`/users/${userId}/status`, { isActive: userData.isActive });
+    console.log('API response:', response.data);
     return response.data;
   },
 }

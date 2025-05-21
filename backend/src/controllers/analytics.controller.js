@@ -94,39 +94,108 @@ export const getDashboardStats = async (req, res, next) => {
 // Get user activity statistics
 export const getUserActivityStats = async (req, res, next) => {
   try {
-    // Get date 30 days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const { period, actionType } = req.query;
     
-    // Aggregate user activities by day
+    // Calculate date range based on period
+    let startDate = new Date();
+    switch(period) {
+      case 'today':
+        startDate.setHours(0, 0, 0, 0);
+        break;
+      case '7days':
+        startDate.setDate(startDate.getDate() - 7);
+        break;
+      case '30days':
+        startDate.setDate(startDate.getDate() - 30);
+        break;
+      case 'all':
+        startDate = new Date(0); // Beginning of time
+        break;
+      default:
+        startDate.setDate(startDate.getDate() - 7); // Default to 7 days
+    }
+
+    // Build match stage for aggregation
+    const matchStage = {
+      date: { $gte: startDate }
+    };
+
+    // Add activity type filter if specified
+    if (actionType) {
+      matchStage['userActivities.activityType'] = {
+        $regex: new RegExp(actionType, 'i')
+      };
+    }
+
+    // Aggregate user activities
     const userActivities = await Inventory.aggregate([
-      { $match: { date: { $gte: thirtyDaysAgo } } },
+      { $match: matchStage },
       { $unwind: '$userActivities' },
       {
-        $group: {
-          _id: {
-            date: { $dateToString: { format: '%Y-%m-%d', date: '$userActivities.timestamp' } },
-            type: '$userActivities.activityType'
-          },
-          count: { $sum: 1 }
+        $lookup: {
+          from: 'users',
+          localField: 'userActivities.user',
+          foreignField: '_id',
+          as: 'userDetails'
         }
       },
       {
-        $group: {
-          _id: '$_id.date',
-          activities: {
-            $push: {
-              type: '$_id.type',
-              count: '$count'
-            }
-          }
+        $lookup: {
+          from: 'books',
+          localField: 'userActivities.book',
+          foreignField: '_id',
+          as: 'bookDetails'
         }
       },
-      { $sort: { _id: 1 } }
+      {
+        $project: {
+          _id: '$userActivities._id',
+          activityType: '$userActivities.activityType',
+          timestamp: '$userActivities.timestamp',
+          user: { $arrayElemAt: ['$userDetails', 0] },
+          book: { $arrayElemAt: ['$bookDetails', 0] }
+        }
+      },
+      { $sort: { timestamp: -1 } }
     ]);
-    
-    res.status(200).json(userActivities);
+
+    // Format the response
+    const formattedActivities = userActivities.map(activity => ({
+      _id: activity._id,
+      actionType: activity.activityType,
+      description: getActivityDescription(activity),
+      user: activity.user ? {
+        name: activity.user.name,
+        email: activity.user.email
+      } : null,
+      book: activity.book ? {
+        title: activity.book.title,
+        id: activity.book._id
+      } : null,
+      createdAt: activity.timestamp
+    }));
+
+    res.status(200).json(formattedActivities);
   } catch (error) {
     next(error);
+  }
+};
+
+// Helper function to generate activity descriptions
+const getActivityDescription = (activity) => {
+  const userName = activity.user?.name || 'A user';
+  const bookTitle = activity.book?.title || 'a book';
+
+  switch(activity.activityType) {
+    case 'signup':
+      return `${userName} created an account`;
+    case 'book_added':
+      return `${userName} added a new book: ${bookTitle}`;
+    case 'book_deleted':
+      return `${userName} deleted the book: ${bookTitle}`;
+    case 'review_added':
+      return `${userName} added a review for: ${bookTitle}`;
+    default:
+      return `${userName} performed an action`;
   }
 };

@@ -24,12 +24,12 @@ const BookInventory = () => {
   });
 
   // Debounced search handler
-  const debouncedSearch = useCallback(
-    debounce((value) => {
-      setSearchTerm(value);
-    }, 500),
-    []
-  );
+  const debouncedSearch = useCallback((value) => {
+    const debouncedFn = debounce((val) => {
+      setSearchTerm(val);
+    }, 500);
+    debouncedFn(value);
+  }, []);
 
   // Delete book mutation
   const deleteMutation = useMutation({
